@@ -1,0 +1,20 @@
+name: Embedded C CI
+on:
+  pull_request:
+    branches: [ dev, main ]
+  push:
+    branches: [ dev, main ]
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential cppcheck
+      - name: Static Analysis
+        run: make lint
+      - name: Build Simulator
+        run: make all
+      - name: Run Unit Tests & Coverage
+        run: make test
