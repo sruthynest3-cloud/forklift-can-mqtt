@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #define _POSIX_C_SOURCE 200809L
 #include "forklift_fsm.h"
 #include "can_codec.h"
@@ -32,7 +33,7 @@ static int open_can_socket(const char *ifname) {
     if (s < 0) return -1;
     struct ifreq ifr;
     memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+    strncpy(ifr.ifr_name, ifname, IF_NAMESIZE- 1);
     if (ioctl(s, SIOCGIFINDEX, &ifr) < 0) { close(s); return -1; }
     struct sockaddr_can addr = { .can_family = AF_CAN, .can_ifindex = ifr.ifr_ifindex };
     if (bind(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) { close(s); return -1; }
@@ -90,7 +91,7 @@ int main(int argc, char **argv) {
             send_can(sock, CAN_ID_MOTOR, tx); /* 1000 ms[cite: 1] */
         }
         tick++;
-        usleep(100000);
+        sleep(100000);
     }
 
     close(sock);

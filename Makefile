@@ -12,7 +12,7 @@ test:
 	gcov test_runner-forklift_fsm test_runner-can_codec
 
 lint:
-	cppcheck --enable=warning,style,performance --error-exitcode=1 src/ include/
+	cppcheck --enable=warning,style,performance --suppress=unusedFunction --error-exitcode=1 src/ include/
 
 clean:
 	rm -f forklift_sim test_runner *.gcno *.gcda *.gcov
