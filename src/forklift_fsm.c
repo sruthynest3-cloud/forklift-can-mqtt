@@ -16,7 +16,8 @@ void forklift_init(ForkliftTelemetry *t) {
 }
 
 bool forklift_handle_command(ForkliftTelemetry *t, uint8_t cmd) {
-    if (cmd == CMD_START) {
+    if (cmd == CMD_START) 
+    {
         if (t->state == STATE_FAULT || t->fault_code != FAULT_NONE) {
             return false;
         }
@@ -24,7 +25,8 @@ bool forklift_handle_command(ForkliftTelemetry *t, uint8_t cmd) {
         t->direction = DIR_FORWARD;
         return true;
     }
-    if (cmd == CMD_STOP) {
+    if (cmd == CMD_STOP) 
+    {
         if (t->state != STATE_FAULT) {
             t->state = STATE_OFF;
         }
@@ -34,10 +36,21 @@ bool forklift_handle_command(ForkliftTelemetry *t, uint8_t cmd) {
         t->motor_torque = 0;
         return true;
     }
-    if (cmd == CMD_RESET_FAULT) {
+    if (cmd == CMD_RESET_FAULT) 
+    {
         if (t->motor_temp > 100 || t->battery_voltage < 40.0f || t->fault_code != FAULT_NONE) {
             return false;
         }
+        t->state = STATE_OFF;
+        t->bat_state = BAT_NORMAL;
+        return true;
+    }
+    if (cmd == 4U) {
+        forklift_inject_fault(t, FAULT_OVERTEMP);
+        return true;
+    }
+    if (cmd == 5U) {
+        forklift_clear_fault_condition(t);
         t->state = STATE_OFF;
         t->bat_state = BAT_NORMAL;
         return true;
